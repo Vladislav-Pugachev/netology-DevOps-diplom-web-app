@@ -1,24 +1,39 @@
 package main
  
 import (
-    "log"
-    "net/http"
+   "log"
+   "net/http"
 	"html/template"
+   aws "web-app/utils"
 )
-var index = template.Must(template.ParseFiles("index.html"))
-var first = template.Must(template.ParseFiles("first.html"))
-func home(w http.ResponseWriter, r *http.Request) {
-	index.Execute(w, nil)
-}
 
-func firstimage(w http.ResponseWriter, r *http.Request) {
-	first.Execute(w, nil)
+func home(w http.ResponseWriter, r *http.Request) {
+http.ServeFile(w, r, "index.html")
+}
+type ViewData struct{
+ 
+    Path string
+    Link string
+}
+func renderImage(w http.ResponseWriter, r *http.Request) {
+    data:=new(ViewData)
+    link:=new(aws.Link)
+    Path:= r.URL.String()
+    switch Path {
+    case "/first":
+        data.Path="Первая картинка"
+    case "/second":
+        data.Path="Вторая картинка"
+    }
+    Link:=link.ReturnLink(Path)
+    data.Link=Link
+    template.Must(template.ParseFiles("template/template.html")).Execute(w, data)
 }
 func main() {
     mux := http.NewServeMux()
     mux.HandleFunc("/", home)
-	mux.HandleFunc("/first/", firstimage)
-	log.Println("Запуск веб-сервера на http://127.0.0.1:4000")
-    err := http.ListenAndServe(":4000", mux)
+	mux.HandleFunc("/first", renderImage)
+    mux.HandleFunc("/second", renderImage)
+    err := http.ListenAndServe(":8080", mux)
     log.Fatal(err)
 }
