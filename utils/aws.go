@@ -24,8 +24,6 @@ func (l *Link) ReturnLink(path string) string{
 		}
 		return aws.Endpoint{}, fmt.Errorf("unknown endpoint requested")
 	})
-
-	fmt.Println(os.Getenv("AccessKeyID"))
 	cred:=config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
 		Value: aws.Credentials{
 			AccessKeyID: os.Getenv("AccessKeyID"), SecretAccessKey: os.Getenv("SecretAccessKey"),
@@ -38,7 +36,6 @@ func (l *Link) ReturnLink(path string) string{
 
 	// Создаем клиента для доступа к хранилищу S3
 	client := s3.NewFromConfig(cfg)
-
 	// Запрашиваем список бакетов
 
 	presignClient := s3.NewPresignClient(client)
@@ -46,7 +43,7 @@ func (l *Link) ReturnLink(path string) string{
 		Bucket: aws.String("pvv-diplom-test3"),
 		Key:    aws.String("web"+path+".jpg"),
 	}, func(opts *s3.PresignOptions) {
-		opts.Expires = time.Duration(1 * int64(time.Second))
+		opts.Expires = time.Duration(30 * int64(time.Second))
 	})
 	if err != nil {
 		panic("Невозможно создать ссылку на объект")
