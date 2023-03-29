@@ -26,8 +26,8 @@ build:
       alias: docker
       command: ["--tls=false"]
   script:
-    - docker build . -t cr.yandex/crp996flki8decrh0tu6/web_app:$TAG_NAME
-    - docker push cr.yandex/crp996flki8decrh0tu6/web_app:$TAG_NAME 
+    - docker build . -t cr.yandex/crphale4jc7cn8jf9u2f/web_app:$TAG_NAME
+    - docker push cr.yandex/crphale4jc7cn8jf9u2f/web_app:$TAG_NAME 
 dev:
   image: gcr.io/cloud-builders/kubectl:latest
   stage: dev
