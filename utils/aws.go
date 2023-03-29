@@ -41,7 +41,7 @@ func (l *Link) ReturnLink(path string) string{
 	presignClient := s3.NewPresignClient(client)
 	presignResult, err := presignClient.PresignGetObject(context.TODO(), &s3.GetObjectInput{
 		Bucket: aws.String("pvv-netology-diplom-web"),
-		Key:    aws.String(path+".jpg"),
+		Key:    aws.String(path),
 	}, func(opts *s3.PresignOptions) {
 		opts.Expires = time.Duration(30 * int64(time.Second))
 	})
