@@ -1,0 +1,44 @@
+variables:
+  TAG_NAME: $CI_COMMIT_SHORT_SHA
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG!=null
+      variables:
+        TAG_NAME: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG==null
+      variables:
+        TAG_NAME: $CI_COMMIT_SHORT_SHA        
+stages:
+  - build
+  - dev
+  - prod
+build:
+  before_script:
+    - echo "cr.yandex/crp996flki8decrh0tu6/web_app:$TAG_NAME"
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375/
+  image: docker:20-dind
+  services:
+    - name: docker:20-dind
+      alias: docker
+      command: ["--tls=false"]
+  script:
+    - docker build . -t cr.yandex/crp996flki8decrh0tu6/web_app:$TAG_NAME
+    - docker push cr.yandex/crp996flki8decrh0tu6/web_app:$TAG_NAME 
+dev:
+  image: gcr.io/cloud-builders/kubectl:latest
+  stage: dev
+  script:
+    - echo "on dev"
+  rules:
+    - if: $CI_COMMIT_TAG==null    
+prod:
+  image: gcr.io/cloud-builders/kubectl:latest
+  stage: prod
+  script:
+    - echo "on prod"
+  rules:
+    - if: $CI_COMMIT_TAG!=null
