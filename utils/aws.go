@@ -48,7 +48,8 @@ func (l *Link) ReturnLink(path string) string{
 	if err != nil {
 		panic("Невозможно создать ссылку на объект")
 	}
-
+	log.Printf("запрос на получение ссылки для картинки %s отправлен", path+".jpg")
+	log.Printf("получена ссылка %s на картинку", presignResult.URL)
 	return presignResult.URL
 
 }
