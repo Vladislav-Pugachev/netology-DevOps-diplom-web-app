@@ -25,8 +25,8 @@ func renderImage(w http.ResponseWriter, r *http.Request) {
     case "/second":
         data.Path="Вторая картинка"
     }
-    Link:=link.ReturnLink(Path)
-    data.Link=Link
+    data.Link=link.ReturnLink(Path)
+    log.Println(data.Link)
     template.Must(template.ParseFiles("template/template.html")).Execute(w, data)
 }
 func main() {
