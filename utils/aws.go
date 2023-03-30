@@ -1,14 +1,17 @@
 package aws
+
 import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 	"time"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/credentials"
-	"os"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 type Link string
@@ -37,19 +40,16 @@ func (l *Link) ReturnLink(path string) string{
 	// Создаем клиента для доступа к хранилищу S3
 	client := s3.NewFromConfig(cfg)
 	// Запрашиваем список бакетов
-
 	presignClient := s3.NewPresignClient(client)
 	presignResult, err := presignClient.PresignGetObject(context.TODO(), &s3.GetObjectInput{
 		Bucket: aws.String("pvv-netology-diplom-web"),
-		Key:    aws.String(path),
+		Key:    aws.String(strings.ReplaceAll(path,"/","")),
 	}, func(opts *s3.PresignOptions) {
-		opts.Expires = time.Duration(30 * int64(time.Second))
+		opts.Expires = 5 * time.Second
 	})
 	if err != nil {
 		panic("Невозможно создать ссылку на объект")
 	}
-	log.Printf("запрос на получение ссылки для картинки %s отправлен", path+".jpg")
-	log.Printf("получена ссылка %s на картинку", presignResult.URL)
 	return presignResult.URL
 
 }
